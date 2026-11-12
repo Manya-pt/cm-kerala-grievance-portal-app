@@ -9,7 +9,7 @@ Citizens submit grievances to the Chief Minister's Office (CMO). The CMO reviews
 |---|---|
 | **Live application** | https://cmk-grievance-portal.onrender.com |
 | **Backend API** | https://cmk-grievance-api.onrender.com/api/health |
-| **Demo video** | [_add link here_](https://drive.google.com/drive/folders/1Cfv34pwqN5_Z1sxp7VgCv8KAZ1S38blp?usp=sharing) |
+| **Demo video** | https://drive.google.com/drive/folders/1Cfv34pwqN5_Z1sxp7VgCv8KAZ1S38blp?usp=sharing |
 
 > Free hosting sleeps when idle. The first request can take ~50 seconds.
 
