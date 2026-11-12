@@ -155,4 +155,4 @@ Plain SQL files in `supabase/`, run on purpose and never automatically:
 - `reference_data.sql`: the 11 departments (fictional).
 - `demo_accounts.sql`: **test accounts only** for evaluators: 1 CMO, 11 officers (one per department) and 2 citizens, all with password `Demo@1234` stored as a scrypt hash. Skip this file on a real deployment and use `python -m app.cli create-cmo`.
 
-No sample grievances are inserted; submit them through the app to see the workflow and dashboards.
+- `sample_grievances.sql` (optional, Supabase/PostgreSQL): 22 fictional grievances in every status, each with its history, plus assignments, action-taken reports, feedback, one escalation, one duplicate pair and 2 contact enquiries, so the dashboards and charts have data. It needs the two files above first and does nothing if run twice. Sample records are labelled `sample data (not AI)` in `ai_source`.

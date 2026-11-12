@@ -42,7 +42,7 @@ On first start the backend creates the tables in local SQLite. Nothing is seeded
 See `.env.example`. **Never commit real secrets.** `.env` is git-ignored.
 
 ## Deployment (Render + Supabase)
-1. **Supabase:** create a project (region Mumbai) → **Connect** → copy the **Session pooler** URI and put your DB password in it. Open **SQL Editor** and run, in order: `supabase/schema.sql`, `supabase/reference_data.sql`, and (test accounts for evaluators only) `supabase/demo_accounts.sql`. Tables should show as RLS-enabled, not "UNRESTRICTED".
+1. **Supabase:** create a project (region Mumbai) → **Connect** → copy the **Session pooler** URI and put your DB password in it. Open **SQL Editor** and run, in order: `supabase/schema.sql`, `supabase/reference_data.sql`, `supabase/demo_accounts.sql` (test accounts for evaluators only) and, optionally, `supabase/sample_grievances.sql` (fictional sample grievances for the dashboards). Tables should show as RLS-enabled, not "UNRESTRICTED".
 2. **Gemini:** create an API key at aistudio.google.com.
 3. **GitHub:** push this repository.
 4. **Render:** New → **Blueprint** → select the repo. Render reads `render.yaml` and creates two services:

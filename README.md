@@ -45,7 +45,7 @@ cd frontend
 npm install
 npm run dev                    # http://localhost:5173
 ```
-Copy `backend/.env.example` to `backend/.env`, keep `DATABASE_URL` commented out (SQLite). For Supabase, run `supabase/schema.sql`, `reference_data.sql` and (for evaluator logins) `demo_accounts.sql` in its SQL Editor and add a `GEMINI_API_KEY` to enable live AI. More detail: [DOCUMENTATION/06_Setup_and_Testing.md](DOCUMENTATION/06_Setup_and_Testing.md).
+Copy `backend/.env.example` to `backend/.env`, keep `DATABASE_URL` commented out (SQLite). For Supabase, run `supabase/schema.sql`, `reference_data.sql`, `demo_accounts.sql` (evaluator logins) and `sample_grievances.sql` (fictional sample data) in its SQL Editor and add a `GEMINI_API_KEY` to enable live AI. More detail: [DOCUMENTATION/06_Setup_and_Testing.md](DOCUMENTATION/06_Setup_and_Testing.md).
 
 ## Documentation
 1. [Project Overview](DOCUMENTATION/01_Project_Overview.md)
