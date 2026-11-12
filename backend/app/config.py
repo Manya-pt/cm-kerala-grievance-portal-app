@@ -34,12 +34,9 @@ class Config:
     GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
     GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.8-flash")
 
-    SEED_ON_START = os.getenv("SEED_ON_START", "true").lower() == "true"
-
 
 class TestConfig(Config):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
     SQLALCHEMY_ENGINE_OPTIONS = {}
     GEMINI_API_KEY = ""
-    SEED_ON_START = False

@@ -7,7 +7,7 @@ import pytest
 from app import create_app
 from app.config import TestConfig
 from app.models import db
-from app.seed import seed
+from app.cli import SQL_DIR, run_sql_file
 
 PDF = b"%PDF-1.4 test file"
 
@@ -16,7 +16,9 @@ PDF = b"%PDF-1.4 test file"
 def client():
     app = create_app(TestConfig)
     with app.app_context():
-        seed()
+        # same SQL files an evaluator runs in Supabase: departments + test accounts
+        run_sql_file(SQL_DIR / "reference_data.sql")
+        run_sql_file(SQL_DIR / "demo_accounts.sql")
         yield app.test_client()
         db.session.remove()
         db.drop_all()
@@ -78,9 +80,31 @@ def test_citizen_sees_only_own_grievances(client):
 
 
 def test_officer_sees_only_department(client):
+    cit, cmo = login(client, "citizen@demo.com"), login(client, "cmo@demo.com")
     h = login(client, "officer.kwa@demo.com")
+    gid = submit(client, cit).json["grievance"]["id"]
+    depts = {d["code"]: d["id"] for d in client.get("/api/departments").json}
+    assert client.get("/api/grievances", headers=h).json == []
+    client.post(f"/api/grievances/{gid}/assign", headers=cmo, json={"department_id": depts["KWA"]})
     items = client.get("/api/grievances", headers=h).json
-    assert items and all(g["department"] == "Water Authority" for g in items)
+    assert len(items) == 1 and items[0]["department"] == "Water Authority"
+    # an officer of another department still sees nothing
+    other = login(client, "officer.pwd@demo.com")
+    assert client.get("/api/grievances", headers=other).json == []
+
+
+def test_cmo_creates_officer(client):
+    cmo, cit = login(client, "cmo@demo.com"), login(client, "citizen@demo.com")
+    dept = client.get("/api/departments").json[0]["id"]
+    body = {"name": "New Officer", "email": "new.officer@gov.test", "mobile": "9876501234",
+            "password": "Officer123", "department_id": dept}
+    assert client.post("/api/officers", json=body, headers=cit).status_code == 403
+    r = client.post("/api/officers", json=body, headers=cmo)
+    assert r.status_code == 201 and r.json["role"] == "officer" and r.json["department_id"] == dept
+    login(client, "new.officer@gov.test", "Officer123")
+    assert client.post("/api/officers", json=body, headers=cmo).status_code == 400  # duplicate email
+    bad = client.post("/api/officers", json={**body, "email": "x@y.test", "department_id": 0}, headers=cmo)
+    assert bad.status_code == 400 and "department_id" in bad.json["fields"]
 
 
 # ---------- submission, upload, tracking ----------

@@ -6,7 +6,8 @@ from flask import Blueprint, g, jsonify, request
 
 from ..ai_service import analyze_grievance
 from ..auth import login_required
-from ..models import DISTRICTS, ContactEnquiry, Department, Grievance, User, now
+from ..models import DISTRICTS, ContactEnquiry, Department, Grievance, User, db, now
+from ..validators import validate_account
 
 bp = Blueprint("admin", __name__, url_prefix="/api")
 
@@ -84,6 +85,33 @@ def officers():
     if request.args.get("department_id"):
         q = q.filter_by(department_id=int(request.args["department_id"]))
     return jsonify([u.to_dict() for u in q.order_by(User.name)])
+
+
+@bp.post("/officers")
+@login_required("cmo")
+def create_officer():
+    """CMO creates a department officer account (public registration is citizens only)."""
+    data = request.get_json(silent=True) or {}
+    name = (data.get("name") or "").strip()
+    email = (data.get("email") or "").strip().lower()
+    mobile = (data.get("mobile") or "").strip()
+    password = data.get("password") or ""
+    try:
+        dept = db.session.get(Department, int(data.get("department_id") or 0))
+    except (TypeError, ValueError):
+        dept = None
+
+    errors = validate_account(name, email, mobile, password)
+    if not dept:
+        errors["department_id"] = "Select a department"
+    if errors:
+        return jsonify(error="Validation failed", fields=errors), 400
+
+    officer = User(name=name, email=email, mobile=mobile, role="officer", department=dept)
+    officer.set_password(password)
+    db.session.add(officer)
+    db.session.commit()
+    return jsonify(officer.to_dict()), 201
 
 
 @bp.get("/contact-enquiries")

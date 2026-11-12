@@ -44,9 +44,8 @@ def create_app(config_class=Config):
                        docs="See DOCUMENTATION/04_API_Documentation.md", health="/api/health")
 
     with app.app_context():
-        db.create_all()  # creates tables if they don't exist
-        if app.config["SEED_ON_START"]:
-            from .seed import seed_if_empty
-            seed_if_empty()
+        # Creates missing tables (local SQLite). On Supabase the tables come from
+        # supabase/schema.sql, so this does nothing there.
+        db.create_all()
 
     return app
