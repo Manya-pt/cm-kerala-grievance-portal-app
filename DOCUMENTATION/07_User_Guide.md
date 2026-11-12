@@ -1,16 +1,16 @@
 # 07 – User Guide
 
-> Prototype with fictional data. Demo password for all test accounts: `Demo@1234`.
+> Prototype with fictional data. Test accounts (from `supabase/demo_accounts.sql`) use the password `Demo@1234`.
 
 ## Public visitors (no login)
 - **Home:** introduction, live sample statistics, featured departments, and **Submit Grievance** / **Track Grievance** buttons.
 - **About Us / How It Works / FAQ:** what the portal is for and how a grievance moves through the system.
 - **Departments:** sample departments that handle grievances.
 - **Contact Us:** send a general enquiry (name, email, subject, message).
-- **Track:** enter a reference number such as `CMK-2026-000002` to see the status, assigned department and public history.
+- **Track:** enter the reference number shown after submission (format `CMK-<year>-<6 digits>`) to see the status, assigned department and public history.
 
 ## Citizens
-1. **Register:** click *Login → Create an account*, enter name, email, 10-digit mobile and a password (8+ characters, letters and numbers). Or use `citizen@demo.com`.
+1. **Register:** click *Login → Create an account*, enter name, email, 10-digit mobile (starting with 6–9) and a password (8+ characters, letters and numbers). Or use `citizen@demo.com`.
 2. **Submit a grievance:** *Dashboard → + Submit new grievance*.
    - Choose district and category, write a subject and a detailed description.
    - Click **Analyse with AI**. The assistant suggests a category, department and priority, writes a summary, and warns if a similar complaint already exists. Click **Apply category & priority** only if you agree.
@@ -32,8 +32,9 @@
 9. **Review action-taken reports:** when an officer submits a report, a highlighted box appears. Write a remark and click **Accept & resolve** or **Return**.
 10. **Resolve directly:** write a resolution remark and click **Mark resolved directly**.
 11. **Contact enquiries:** dashboard → *Contact enquiries*.
+12. **Officers:** dashboard → *Officers* to create a department officer account (department, name, email, mobile, initial password) and see existing officers.
 
-## Department officers (`officer.<code>@demo.com`, e.g. `officer.kwa@demo.com`)
+## Department officers (test accounts `officer.<code>@demo.com`, e.g. `officer.kwa@demo.com`, or accounts created by the CMO)
 1. **Dashboard:** grievances forwarded to your department only, with counts. Tabs: Active, Resolved, All.
 2. **Open a grievance:** read the details and open attachments.
 3. **Start investigation:** write remarks and click **Start (set In Progress)**. Further remarks are posted as progress updates and are visible to the CMO and citizen.

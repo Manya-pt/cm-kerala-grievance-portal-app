@@ -49,16 +49,18 @@ A standalone copy is in [diagrams/architecture.md](diagrams/architecture.md).
 ## Backend (`/backend`)
 | Module | Responsibility |
 |---|---|
-| `app/__init__.py` | App factory: config, CORS, blueprints, JSON error handlers, security headers, table creation, auto-seed |
+| `app/__init__.py` | App factory: config, CORS, blueprints, JSON error handlers, security headers, table creation (local SQLite) |
 | `config.py` | Reads all settings and secrets from environment variables |
-| `models.py` | 10 SQLAlchemy models (see 03_Database_Design.md) |
+| `models.py` | 9 SQLAlchemy models (see 03_Database_Design.md) |
 | `auth.py` | `create_token()` and the `@login_required(*roles)` decorator |
 | `workflow.py` | Allowed status transitions per role, `log_action()` that writes history, `can_view()` ownership rules |
-| `ai_service.py` | Duplicate candidates, Gemini call, output validation, labelled fallback |
+| `ai_service.py` | Duplicate candidates, Gemini call (tries each model in `GEMINI_MODEL` in order), output validation, labelled fallback |
 | `routes/auth_routes.py` | Register, login, me, logout |
 | `routes/public_routes.py` | Health, meta lists, departments, contact, public tracking, public stats |
 | `routes/grievance_routes.py` | Submit, list, detail, status, edit, assign, remarks, escalate, re-analyse, ATR submit/review, feedback, file download |
-| `routes/admin_routes.py` | Statistics, AI analyse, officers list, contact enquiries |
+| `routes/admin_routes.py` | Statistics, AI analyse, officers list and creation, contact enquiries |
+| `validators.py` | Name/email/mobile/password checks shared by registration and officer creation |
+| `cli.py` | `load-reference-data` and `create-cmo` commands (no automatic seeding) |
 
 ### Request lifecycle (example: officer updates status)
 1. React calls `PATCH /api/grievances/12/status` with the JWT.
@@ -69,7 +71,7 @@ A standalone copy is in [diagrams/architecture.md](diagrams/architecture.md).
 6. The transaction is committed and the updated record is returned as JSON.
 
 ## Database
-PostgreSQL on Supabase in production (connected through the session pooler). SQLite is used for local development and the in-memory test suite. SQLAlchemy keeps the code identical for both. Tables are created automatically on start-up, and demo data is inserted when the database is empty.
+PostgreSQL on Supabase in production (connected through the session pooler). SQLite is used for local development and the in-memory test suite. SQLAlchemy keeps the code identical for both. On Supabase the schema is created by `supabase/schema.sql` (with row level security enabled, so the public API key cannot read the tables). Locally, SQLAlchemy creates the tables on start-up. Nothing is seeded automatically.
 
 ## APIs
 REST over JSON (multipart for file uploads). See [04_API_Documentation.md](04_API_Documentation.md).
@@ -82,7 +84,8 @@ REST over JSON (multipart for file uploads). See [04_API_Documentation.md](04_AP
 - JWT signed with `SECRET_KEY` (HS256), 12-hour expiry.
 - Role checks on every protected endpoint; ownership checks (citizen = own, officer = own department).
 - The same 404 for "not found" and "not yours", so other users' IDs cannot be probed.
-- Public registration creates **citizens only**; staff accounts cannot be self-created.
+- Public registration creates **citizens only**. The first CMO is created from the command line; the CMO then creates officer accounts (`POST /api/officers`).
+- Row level security is enabled on every Supabase table; only the backend (database owner role) can access data.
 - Upload validation: extension allow-list, magic-byte content check, 5 MB limit, `secure_filename`.
 - Internal remarks are filtered out of citizen and public responses.
 - Security headers (`nosniff`, `X-Frame-Options: DENY`, referrer policy); CORS restricted to the frontend origin.

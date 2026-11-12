@@ -17,14 +17,14 @@ Citizens across Kerala face problems with roads, water, electricity, healthcare,
 ## Scope
 **In scope (prototype):** public website, citizen portal, CMO dashboard, department officer dashboard, the full grievance workflow, AI Grievance Assistant, file upload/retrieval, statistics and charts, documentation, deployment.
 
-**Out of scope:** email/SMS notifications, real government integrations, Aadhaar/e-KYC, multilingual UI, admin screens for creating officers (done with seed data).
+**Out of scope:** email/SMS notifications, real government integrations, Aadhaar/e-KYC, multilingual UI, editing or deleting officers (the CMO can create them).
 
 ## Users and roles
 | Role | Can do |
 |---|---|
 | Public visitor | Read information pages, view departments, send a contact enquiry, track a grievance by reference number |
 | Citizen | Register/login, submit grievances with attachments, use the AI assistant, view the dashboard and history, give feedback, reopen |
-| CMO administrator | See all grievances and statistics, filter, view attachments, forward, add remarks, escalate, change priority/category, review action-taken reports, resolve, view contact enquiries |
+| CMO administrator | See all grievances and statistics, filter, view attachments, forward, add remarks, escalate, change priority/category, review action-taken reports, resolve, view contact enquiries, create department officer accounts |
 | Department officer | See grievances forwarded to their department, update status, add remarks, submit action-taken reports with files |
 
 ## Feature list

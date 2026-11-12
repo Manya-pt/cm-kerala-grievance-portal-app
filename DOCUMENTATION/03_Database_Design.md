@@ -1,6 +1,6 @@
 # 03 – Database Design
 
-PostgreSQL (Supabase) in production, SQLite locally. Defined with SQLAlchemy in `backend/app/models.py`. Tables are created automatically at start-up.
+PostgreSQL (Supabase) in production, SQLite locally. The ORM models are in `backend/app/models.py`. The Supabase schema is the SQL in [`supabase/schema.sql`](../supabase/schema.sql) (tables, foreign keys, CHECK constraints, indexes, row level security). Locally SQLAlchemy creates the same tables on start-up.
 
 ## ER diagram
 ```mermaid
@@ -151,4 +151,8 @@ A standalone copy is in [diagrams/er_diagram.md](diagrams/er_diagram.md).
 - **Reference number** `CMK-<year>-<id padded to 6>` is unique and generated after insert.
 
 ## Sample data
-`backend/app/seed.py` inserts 11 departments, 1 CMO admin, 11 officers, 2 citizens, 22 grievances in every status (with history, assignments, reports, feedback, one escalation and one duplicate pair) and 2 contact enquiries. All data is fictional.
+Plain SQL files in `supabase/`, run on purpose and never automatically:
+- `reference_data.sql`: the 11 departments (fictional).
+- `demo_accounts.sql`: **test accounts only** for evaluators: 1 CMO, 11 officers (one per department) and 2 citizens, all with password `Demo@1234` stored as a scrypt hash. Skip this file on a real deployment and use `python -m app.cli create-cmo`.
+
+No sample grievances are inserted; submit them through the app to see the workflow and dashboards.

@@ -48,6 +48,7 @@
 | GET | `/stats` | CMO / Officer / Citizen | Dashboard statistics (scoped) |
 | POST | `/ai/analyze` | Citizen, CMO | AI suggestions for a draft complaint |
 | GET | `/officers?department_id=` | CMO | Officers list |
+| POST | `/officers` | CMO | Create a department officer account |
 | GET | `/contact-enquiries` | CMO | Contact enquiries |
 
 ### Status transition rules (`PATCH /grievances/{id}/status`)
@@ -74,6 +75,7 @@
 // 400
 { "error": "Validation failed", "fields": { "mobile": "Enter a valid 10-digit mobile number" } }
 ```
+Mobile must be 10 digits starting with 6–9. Password: 8+ characters with at least one letter and one digit.
 
 ### POST /auth/login
 ```json
@@ -189,6 +191,14 @@ CMO = all data; officer = own department; citizen = own grievances.
   "source": "gemini:gemini-3.8-flash", "notice": "AI suggestions only. Please review before accepting." }
 ```
 If the AI is unavailable, `source` is `"fallback"` and `notice` says the output is not AI.
+
+### POST /officers (CMO)
+```json
+// request
+{ "name": "Sita Nair", "email": "sita@example.com", "mobile": "9876543210", "password": "Officer123", "department_id": 2 }
+// 201 -> { "id": 16, "name": "Sita Nair", "role": "officer", "department_id": 2, "department": "Water Authority", ... }
+// 400 -> { "error": "Validation failed", "fields": { "email": "An account with this email already exists" } }
+```
 
 ### POST /contact
 ```json
