@@ -13,6 +13,7 @@ import CitizenDashboard from "./pages/citizen/CitizenDashboard";
 import SubmitGrievance from "./pages/citizen/SubmitGrievance";
 import CmoDashboard from "./pages/cmo/CmoDashboard";
 import Enquiries from "./pages/cmo/Enquiries";
+import Officers from "./pages/cmo/Officers";
 import OfficerDashboard from "./pages/officer/OfficerDashboard";
 import GrievanceDetail from "./pages/GrievanceDetail";
 
@@ -37,6 +38,7 @@ export default function App() {
         <Route element={<ProtectedRoute roles={["cmo"]} />}>
           <Route path="/cmo" element={<CmoDashboard />} />
           <Route path="/cmo/enquiries" element={<Enquiries />} />
+          <Route path="/cmo/officers" element={<Officers />} />
         </Route>
         <Route element={<ProtectedRoute roles={["officer"]} />}>
           <Route path="/officer" element={<OfficerDashboard />} />

@@ -48,7 +48,10 @@ export default function CmoDashboard() {
           <h1>Chief Minister's Office dashboard</h1>
           <p className="muted">Review, forward and monitor all grievances across Kerala.</p>
         </div>
-        <Link to="/cmo/enquiries" className="btn btn-outline">Contact enquiries</Link>
+        <div className="row-gap">
+          <Link to="/cmo/officers" className="btn btn-outline">Officers</Link>{" "}
+          <Link to="/cmo/enquiries" className="btn btn-outline">Contact enquiries</Link>
+        </div>
       </div>
       <Alert>{error}</Alert>
       {!stats ? <Loader /> : (
