@@ -21,7 +21,7 @@ from flask import current_app
 from .models import CATEGORIES, PRIORITIES, Department, Grievance, now
 
 log = logging.getLogger(__name__)
-TIMEOUT = 25  # seconds
+TIMEOUT = 15  # seconds per model
 
 PROMPT = """You are an assistant for a Chief Minister's Office public grievance portal in Kerala, India.
 Analyse the citizen complaint and return ONLY a JSON object with these keys:
@@ -74,18 +74,26 @@ def find_duplicate_candidates(text, district, exclude_id=None, limit=5):
 
 # ---------- Gemini API ----------
 def _call_gemini(prompt):
+    """Try each model in GEMINI_MODEL (comma-separated) until one answers."""
     cfg = current_app.config
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/{cfg['GEMINI_MODEL']}:generateContent"
+    models = [m.strip() for m in cfg["GEMINI_MODEL"].split(",") if m.strip()]
     body = {
         "contents": [{"parts": [{"text": prompt}]}],
         "generationConfig": {"temperature": 0.2, "responseMimeType": "application/json"},
     }
-    r = requests.post(url, json=body, timeout=TIMEOUT,
-                      headers={"x-goog-api-key": cfg["GEMINI_API_KEY"]})
-    r.raise_for_status()
-    text = r.json()["candidates"][0]["content"]["parts"][0]["text"]
-    return text, f"gemini:{cfg['GEMINI_MODEL']}"
-
+    last_exc = None
+    for model in models:
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
+        try:
+            r = requests.post(url, json=body, timeout=TIMEOUT,
+                              headers={"x-goog-api-key": cfg["GEMINI_API_KEY"]})
+            r.raise_for_status()
+            text = r.json()["candidates"][0]["content"]["parts"][0]["text"]
+            return text, f"gemini:{model}"
+        except Exception as exc:  # overloaded, timeout, unknown model: try the next
+            log.warning("Gemini model %s failed: %s", model, exc)
+            last_exc = exc
+    raise last_exc
 
 def _parse_json(text):
     text = text.strip()
